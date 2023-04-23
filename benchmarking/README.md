@@ -1,10 +1,10 @@
-# Benchmarking `better_profanity`
+# Benchmarking `subjectively_better_profanity`
 
-This directory provides code for benchmarking the memory usage and speed of `better_profanity`.
+This directory provides code for benchmarking the memory usage and speed of `subjectively_better_profanity`.
 
 ## Setup
 
-Follow the **Installation** instructions for `better_profanity` to ensure the version you intend to benchmark is installed.
+Follow the **Installation** instructions for `subjectively_better_profanity` to ensure the version you intend to benchmark is installed.
 
 Install additional dependencies by running
 
@@ -41,4 +41,4 @@ Note that this script uses `pytest` and `pytest-benchmark`. If you run the comma
 ## Limitations
 
 1. Memory usage reported by `memory.py` may vary slightly between runs. Run `memory.py` several times and compute an average for a more accurate memory benchmark.
-2. The dataset used by `paragraphs.py` may not be valid for all versions of `better_profanity`. If some words contained in the default word list are removed, some paragraphs' text may not be censored as expected.
+2. The dataset used by `paragraphs.py` may not be valid for all versions of `subjectively_better_profanity`. If some words contained in the default word list are removed, some paragraphs' text may not be censored as expected.

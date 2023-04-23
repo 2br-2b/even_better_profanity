@@ -1,35 +1,29 @@
 # even_better_profanity
 
-Hi! This is a fork of [@snguyenthanh](https://github.com/snguyenthanh)'s [better_profanity](https://github.com/snguyenthanh/better_profanity) library. I just started this recently, but I wanted to catch some additional edge cases not found in the original filter.
+*Blazingly fast cleaning swear words (and their leetspeak) in strings*
 
-For example, some rather-obvious edge cases are not caught:
+Hi! This is a fork of [@snguyenthanh](https://github.com/snguyenthanh)'s [better_profanity](https://github.com/snguyenthanh/better_profanity) library. I just started this recently, but I wanted to catch some additional edge cases not found in the original filter:
+
 ```
 "fuck
 fuckk
 ```
 
-This fork is an attempt to fix that. Will all edge cases be caught? Absolutely not. Will the library be faster? Questionable. I guess we'll just wait and see :smiley:
+This fork is an attempt to fix that, even to the extent of going overboard and censoring too much. For example, `Assignment` and `Classic` will be censored to `****ignment` and `Cl****ic`.
 
-To the extent possible, I want to build on and use better_profanity's api so that these two libraries are interchangeable. I may change this in the future, but my plan for now is to make the two libraries use the same interface.
+Given how the censor catches too many words (*and that it is slower and uses more memory than the original library*), I didn't end up implementing this filter myself, rather relying on the original filter; however, I figured some other people might want to use this, so I hope this is helpful!
 
-# better_profanity
+To the extent possible, I want to build on and use better_profanity's interface so that the matching versions of these two libraries are interchangeable. I may change this in the future, but my plan for now is to make the two libraries have the same functions. For example, if you use v0.7.0 of better_profanity, you should be able to substitute in subjectively_better_profanity and your program should work the same.
 
-*Blazingly fast cleaning swear words (and their leetspeak) in strings*
+Inspired from package [better_profanity](https://github.com/snguyenthanh/better_profanity) by [@snguyenthanh](https://github.com/snguyenthanh), which was in turn inspired by [profanity](https://github.com/ben174/profanity) of [Ben Friedland](https://github.com/ben174). This library is slower and more memory-intensive than `better_profanity`.
 
-[![release](https://img.shields.io/badge/dynamic/json.svg?label=release&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fbetter-profanity%2Fjson&query=%24.info.version&colorB=blue)](https://github.com/snguyenthanh/better_profanity/releases/latest)
-[![Build Status](https://travis-ci.com/snguyenthanh/better_profanity.svg?branch=master)](https://travis-ci.com/snguyenthanh/better_profanity)
-![python](https://img.shields.io/badge/python-3-blue.svg)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=popout)](https://github.com/snguyenthanh/better_profanity/blob/master/LICENSE)
-
-> Currently there is a [performance issue with the latest version (0.7.0)](https://github.com/snguyenthanh/better_profanity/issues/19). It is recommended to use the [last stable version 0.6.1](https://pypi.org/project/better-profanity/0.6.1/).
-
-Inspired from package [profanity](https://github.com/ben174/profanity) of [Ben Friedland](https://github.com/ben174), this library is significantly faster than the original one, by using string comparison instead of regex.
+This utilizes Aho-Corasick algorithm (as implemented in the [pyahocorasick](https://github.com/WojciechMula/pyahocorasick) library by [WojciechMula](https://github.com/WojciechMula)).
 
 It supports [modified spellings](https://en.wikipedia.org/wiki/Leet) (such as `p0rn`, `h4NDjob`, `handj0b` and `b*tCh`).
 
 ## Requirements
 
-This package works with `Python 3.5+` and `PyPy3`.
+This package works with `Python 3.5+` and `PyPy3`. Run `pip install -r requirements.txt`
 
 ## Installation
 
@@ -48,7 +42,7 @@ Not all languages are supported yet, such as *Chinese*.
 ## Usage
 
 ```python
-from better_profanity import profanity
+from subjectively_better_profanity import profanity
 
 if __name__ == "__main__":
     profanity.load_censor_words()
@@ -59,21 +53,21 @@ if __name__ == "__main__":
     # You **** of ****.
 ```
 
-All modified spellings of words in [profanity_wordlist.txt](./better_profanity/profanity_wordlist.txt) will be generated. For example, the word `handjob` would be loaded into:
+All modified spellings of words in [profanity_wordlist.txt](./subjectively_better_profanity/profanity_wordlist.txt) will be generated. For example, the word `handjob` would be loaded into:
 
 ```python
 'handjob', 'handj*b', 'handj0b', 'handj@b', 'h@ndjob', 'h@ndj*b', 'h@ndj0b', 'h@ndj@b',
 'h*ndjob', 'h*ndj*b', 'h*ndj0b', 'h*ndj@b', 'h4ndjob', 'h4ndj*b', 'h4ndj0b', 'h4ndj@b'
 ```
 
-The full mapping of the library can be found in [profanity.py](./better_profanity/better_profanity.py#L18-L26).
+The full mapping of the library can be found in [profanity.py](./subjectively_better_profanity/better_profanity.py).
 
 ### 1. Censor swear words from a text
 
 By default, `profanity` replaces each swear words with 4 asterisks `****`.
 
 ```python
-from better_profanity import profanity
+from subjectively_better_profanity import profanity
 
 if __name__ == "__main__":
     text = "You p1ec3 of sHit."
@@ -103,7 +97,7 @@ if __name__ == "__main__":
 4 instances of the character in second parameter in `.censor()` will be used to replace the swear words.
 
 ```python
-from better_profanity import profanity
+from subjectively_better_profanity import profanity
 
 if __name__ == "__main__":
     text = "You p1ec3 of sHit."
@@ -118,7 +112,7 @@ if __name__ == "__main__":
 Function `.contains_profanity()` return `True` if any words in the given string has a word existing in the wordlist.
 
 ```python
-from better_profanity import profanity
+from subjectively_better_profanity import profanity
 
 if __name__ == "__main__":
     dirty_text = "That l3sbi4n did a very good H4ndjob."
@@ -135,7 +129,7 @@ Function `load_censor_words` takes a `List` of strings as censored words.
 The provided list will replace the default wordlist.
 
 ```python
-from better_profanity import profanity
+from subjectively_better_profanity import profanity
 
 if __name__ == "__main__":
     custom_badwords = ['happy', 'jolly', 'merry']
@@ -147,10 +141,10 @@ if __name__ == "__main__":
 
 #### 5.2. Wordlist as a file
 
-Function `load_censor_words_from_file takes a filename, which is a text file and each word is separated by lines.
+Function `load_censor_words_from_file` takes a filename, which is a text file and each word is separated by lines.
 
 ```python
-from better_profanity import profanity
+from subjectively_better_profanity import profanity
 
 if __name__ == "__main__":
     profanity.load_censor_words_from_file('/path/to/my/project/my_wordlist.txt')
@@ -177,7 +171,7 @@ profanity.load_censor_words_from_file('/path/to/my/project/my_wordlist.txt', whi
 ### 7. Add more censor words
 
 ```python
-from better_profanity import profanity
+from subjectively_better_profanity import profanity
 
 if __name__ == "__main__":
     custom_badwords = ['happy', 'jolly', 'merry']
@@ -187,19 +181,30 @@ if __name__ == "__main__":
     # **** you, ****!
 ```
 
+## Improvements
+
+### 1. Due to a change in the algorithm, words with non-space separators are now supported (fixing [this issue](https://github.com/snguyenthanh/better_profanity/issues/5))
+
+
 ## Limitations
 
-1. As the library compares each word by characters, the censor could easily be bypassed by adding any character(s) to the word:
+### 1. The library no longer compares each word by characters, so it will be more likely to catch profanity:
 
 ```python
 profanity.censor('I just have sexx')
-# returns 'I just have sexx'
+# returns 'I just have ****x'
 
 profanity.censor('jerkk off')
-# returns 'jerkk off'
+# returns '****k off'
 ```
 
-2. Any word in [wordlist](https://github.com/snguyenthanh/better_profanity/blob/master/better_profanity/profanity_wordlist.txt) that have non-space separators cannot be recognised, such as `s & m`, and therefore, it won't be filtered out. This problem was raised in [#5](https://github.com/snguyenthanh/better_profanity/issues/5).
+However, it comes at the cost of being oversensitive:
+```python
+profanity.censor('classic assignment')
+# returns cl****ic ***ignment'
+```
+
+### 2. The library is slower and requires more memory
 
 ## Testing
 
@@ -222,4 +227,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-- [Ben Friedland](https://github.com/ben174) - For the inspiring package [profanity](https://github.com/ben174/profanity).
+- [Son Nguyen](https://github.com/snguyenthanh) - For the inspiring package (from which much of this code is copied from) [better_profanity](https://github.com/snguyenthanh/better_profanity)
+- [Wojciech Mula](https://github.com/WojciechMula) for the [pyahocorasick](https://github.com/WojciechMula/pyahocorasick) library
+- [Ben Friedland](https://github.com/ben174) - For the original inspiring package [profanity](https://github.com/ben174/profanity).

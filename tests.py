@@ -2,8 +2,8 @@
 
 import unittest
 
-import better_profanity
-from better_profanity import profanity, Profanity
+import subjectively_better_profanity
+from subjectively_better_profanity import profanity, Profanity
 import os
 
 
@@ -128,7 +128,7 @@ class ProfanityTest(unittest.TestCase):
     def test_all_default_words(self):
         """Tests that every word in the default word list is censored"""
         wordlist_path = os.path.join(
-            better_profanity.__file__, "../profanity_wordlist.txt"
+            subjectively_better_profanity.__file__, "../profanity_wordlist.txt"
         )
         wordlist_path = os.path.abspath(wordlist_path)
         with open(wordlist_path) as f:

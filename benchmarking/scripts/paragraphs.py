@@ -1,9 +1,9 @@
-"""Benchmarks how fast better_profanity censors large bodies of text"""
+"""Benchmarks how fast subjectively_better_profanity censors large bodies of text"""
 
 import os
 import pytest
 
-from better_profanity import profanity
+from subjectively_better_profanity import profanity
 
 
 def trial(benchmark, dataset):

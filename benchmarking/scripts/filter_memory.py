@@ -6,19 +6,19 @@ from memory_profiler import profile
 
 @profile
 def profile_default_wordlist():
-    from better_profanity import profanity
+    from subjectively_better_profanity import profanity
 
 
 @profile
 def profile_custom_wordlist(wordlist_path):
-    from better_profanity import Profanity
+    from subjectively_better_profanity import Profanity
 
     Profanity(wordlist_path)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Profiles the memory usage of a better_profanity profanity filter"
+        description="Profiles the memory usage of a subjectively_better_profanity profanity filter"
     )
     parser.add_argument(
         "wordlist",
