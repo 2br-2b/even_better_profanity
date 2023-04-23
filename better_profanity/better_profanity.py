@@ -62,7 +62,7 @@ class Profanity:
         for end_index, value in self.automaton.iter(text.lower()):
             start_index = end_index - len(value) + 1
             
-            text = text[:start_index] + censor_char * len(value) + text[end_index + 1:]
+            text = text[:start_index] + get_replacement_for_swear_word(censor_char) + text[end_index + 1:]
             
         return text
 
