@@ -18,8 +18,11 @@ def read_wordlist(filename: str):
                 yield row
 
 
-def get_replacement_for_swear_word(censor_char):
-    return censor_char * 4
+def get_replacement_for_swear_word(censor_char, censor_word="hehe", preserve_first_character = False):
+    if preserve_first_character:
+        return censor_word[:1] + "*" * (len(censor_word) - 1)
+    else:
+        return "*" * len(censor_word)
 
 
 def any_next_words_form_swear_word(cur_word, words_indices, censor_words):
