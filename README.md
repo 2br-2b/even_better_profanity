@@ -1,3 +1,15 @@
+# even_better_profanity
+
+Hi! This is a fork of [@snguyenthanh](https://github.com/snguyenthanh)'s [better_profanity](https://github.com/snguyenthanh/better_profanity) library. I just started this recently, but I wanted to catch some additional edge cases not found in the original filter.
+
+For example, some rather-obvious edge cases are not caught:
+```
+"fuck
+fuckk
+```
+
+This fork is an attempt to fix that. Will all edge cases be caught? Absolutely not. Will the library be faster? Questionable. I guess we'll just wait and see :smiley:
+
 # better_profanity
 
 *Blazingly fast cleaning swear words (and their leetspeak) in strings*
