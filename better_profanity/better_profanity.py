@@ -56,10 +56,10 @@ class Profanity:
 
     ## PUBLIC ##
 
-    def censor(self, text, censor_char="*"):
+    def censor(self, text: str, censor_char="*"):
         """Replace the swear words in the text with `censor_char`."""
         
-        for end_index, value in A.iter(text):
+        for end_index, value in self.automaton.iter(text.lower()):
             start_index = end_index - len(value) + 1
             
             text = text[:start_index] + censor_char * len(value) + text[end_index + 1:]
@@ -87,7 +87,7 @@ class Profanity:
     def contains_profanity(self, text):
         """Return True if  the input text has any swear words."""
         
-        return len(tuple(self.automaton.iter(text))) != 0
+        return len(tuple(self.automaton.iter(text.lower()))) != 0
 
     ## PRIVATE ##
 
