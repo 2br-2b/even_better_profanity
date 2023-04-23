@@ -10,6 +10,8 @@ fuckk
 
 This fork is an attempt to fix that. Will all edge cases be caught? Absolutely not. Will the library be faster? Questionable. I guess we'll just wait and see :smiley:
 
+To the extent possible, I want to build on and use better_profanity's api so that these two libraries are interchangeable. I may change this in the future, but my plan for now is to make the two libraries use the same interface.
+
 # better_profanity
 
 *Blazingly fast cleaning swear words (and their leetspeak) in strings*
