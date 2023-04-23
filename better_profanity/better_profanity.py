@@ -5,7 +5,6 @@ import ahocorasick
 
 from .constants import ALLOWED_CHARACTERS
 from .utils import (
-    any_next_words_form_swear_word,
     get_complete_path_of_file,
     get_replacement_for_swear_word,
     read_wordlist,
