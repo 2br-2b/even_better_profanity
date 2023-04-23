@@ -23,6 +23,9 @@ def trial(benchmark, dataset):
     # Benchmark the censor operation.
     actual_censored = benchmark(profanity.censor, original)
     assert actual_censored == expected_censored
+    
+    with open(os.path.join(data_dir, "new_censored.txt"), "w+") as new_censored:
+        new_censored.write(actual_censored)
 
 
 def test_1para_0per(benchmark):
