@@ -1,7 +1,8 @@
 
 
 - [x] re-implement library functions
-- [ ] Add required.txt
+- [x] Add required.txt
 - [ ] Add return types
 - [ ] Add descriptions of functions
-- [ ] Benchmark
+- [x] Benchmark
+- [ ] Pass all the tests
