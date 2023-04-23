@@ -65,3 +65,6 @@ class VaryingString:
             return False
         else:
             return False
+
+    def get_all_combos(self):
+        return self._char_combos

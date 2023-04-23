@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections.abc import Iterable
+import ahocorasick
 
 from .constants import ALLOWED_CHARACTERS
 from .utils import (
@@ -23,6 +24,8 @@ class Profanity:
             TypeError: If `words` is not a valid type.
             FileNotFoundError: If `words` is a `str` and is not a valid file path.
         """
+        self.automaton = ahocorasick.Automaton(ahocorasick.STORE_INTS)
+
         if (
             words is not None
             and not isinstance(words, str)
@@ -55,15 +58,13 @@ class Profanity:
 
     def censor(self, text, censor_char="*"):
         """Replace the swear words in the text with `censor_char`."""
-
-        if not isinstance(text, str):
-            text = str(text)
-        if not isinstance(censor_char, str):
-            censor_char = str(censor_char)
-
-        if not self.CENSOR_WORDSET:
-            self.load_censor_words()
-        return self._hide_swear_words(text, censor_char)
+        
+        for end_index, value in A.iter(text):
+            start_index = end_index - len(value) + 1
+            
+            text = text[:start_index] + censor_char * len(value) + text[end_index + 1:]
+            
+        return text
 
     def load_censor_words_from_file(self, filename, **kwargs):
         words = read_wordlist(filename)
@@ -85,7 +86,8 @@ class Profanity:
 
     def contains_profanity(self, text):
         """Return True if  the input text has any swear words."""
-        return text != self.censor(text)
+        
+        return len(tuple(self.automaton.iter(text))) != 0
 
     ## PRIVATE ##
 
@@ -125,6 +127,8 @@ class Profanity:
 
         # The default wordlist takes ~5MB+ of memory
         self.CENSOR_WORDSET = all_censor_words
+        
+        self._create_character_map()
 
     def _count_non_allowed_characters(self, word):
         count = 0
@@ -133,124 +137,16 @@ class Profanity:
                 count += 1
         return count
 
-    def _update_next_words_indices(self, text, words_indices, start_idx):
-        """Return a list of next words_indices after the input index."""
-        if not words_indices:
-            words_indices = self._get_next_words(
-                text, start_idx, self.MAX_NUMBER_COMBINATIONS
-            )
-        else:
-            del words_indices[:2]
-            if words_indices and words_indices[-1][0] != "":
-                words_indices += self._get_next_words(text, words_indices[-1][1], 1)
-        return words_indices
 
-    def _hide_swear_words(self, text, censor_char):
-        """Replace the swear words with censor characters."""
-        censored_text = ""
-        cur_word = ""
-        skip_index = -1
-        next_words_indices = []
-        start_idx_of_next_word = self._get_start_index_of_next_word(text, 0)
+    def _create_character_map(self) -> None:
+        new_automaton = ahocorasick.Automaton()
 
-        # If there are no words in the text, return the raw text without parsing
-        if start_idx_of_next_word >= len(text) - 1:
-            return text
-
-        # Left strip the text, to avoid inaccurate parsing
-        if start_idx_of_next_word > 0:
-            censored_text = text[:start_idx_of_next_word]
-            text = text[start_idx_of_next_word:]
-
-        # Splitting each word in the text to compare with censored words
-        for index, char in iter(enumerate(text)):
-            if index < skip_index:
-                continue
-            if char in ALLOWED_CHARACTERS:
-                cur_word += char
-                continue
-
-            # Skip continuous non-allowed characters
-            if cur_word.strip() == "":
-                censored_text += char
-                cur_word = ""
-                continue
-
-            # Iterate the next words combined with the current one
-            # to check if it forms a swear word
-            next_words_indices = self._update_next_words_indices(
-                text, next_words_indices, index
-            )
-            contains_swear_word, end_index = any_next_words_form_swear_word(
-                cur_word, next_words_indices, self.CENSOR_WORDSET
-            )
-            if contains_swear_word:
-                cur_word = get_replacement_for_swear_word(censor_char)
-                skip_index = end_index
-                char = ""
-                next_words_indices = []
-
-            # If the current a swear word
-            if cur_word.lower() in self.CENSOR_WORDSET:
-                cur_word = get_replacement_for_swear_word(censor_char)
-
-            censored_text += cur_word + char
-            cur_word = ""
-
-        # Final check
-        if cur_word != "" and skip_index < len(text) - 1:
-            if cur_word.lower() in self.CENSOR_WORDSET:
-                cur_word = get_replacement_for_swear_word(censor_char)
-            censored_text += cur_word
-        return censored_text
-
-    def _get_start_index_of_next_word(self, text, start_idx):
-        """Return the index of the first character of the next word in the given text."""
-        start_idx_of_next_word = len(text)
-        for index in iter(range(start_idx, len(text))):
-            if text[index] not in self.ALLOWED_CHARACTERS:
-                continue
-            start_idx_of_next_word = index
-            break
-
-        return start_idx_of_next_word
-
-    def _get_next_word_and_end_index(self, text, start_idx):
-        """Return the next word in the given text, and the index of its last character."""
-        next_word = ""
-        index = start_idx
-        for index in iter(range(start_idx, len(text))):
-            char = text[index]
-            if char in self.ALLOWED_CHARACTERS:
-                next_word += char
-                continue
-            break
-        return next_word, index
-
-    def _get_next_words(self, text, start_idx, num_of_next_words=1):
-        """
-        Return a list of pairs of next words and next words included with separators,
-        combined with their end indices.
-        For example: Word `hand_job` has next words pairs: `job`, `_job`.
-        """
-
-        # Find the starting index of the next word
-        start_idx_of_next_word = self._get_start_index_of_next_word(text, start_idx)
-
-        # Return an empty string if there are no other words
-        if start_idx_of_next_word >= len(text) - 1:
-            return [("", start_idx_of_next_word), ("", start_idx_of_next_word)]
-
-        # Combine the  words into a list
-        next_word, end_index = self._get_next_word_and_end_index(
-            text, start_idx_of_next_word
-        )
-
-        words = [
-            (next_word, end_index),
-            ("%s%s" % (text[start_idx:start_idx_of_next_word], next_word), end_index),
-        ]
-        if num_of_next_words > 1:
-            words.extend(self._get_next_words(text, end_index, num_of_next_words - 1))
-
-        return words
+        for varying_word in self.CENSOR_WORDSET:
+            for word in varying_word.get_all_combos():
+                new_automaton.add_word(word, word)
+            
+        new_automaton.make_automaton()
+        
+        self.automaton = new_automaton
+    
+    
