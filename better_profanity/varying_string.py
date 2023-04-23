@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+import itertools
 
 class VaryingString:
     """Represents a string with varying character representations."""
@@ -67,4 +66,5 @@ class VaryingString:
             return False
 
     def get_all_combos(self):
-        return self._char_combos
+        return list(''.join(chars) for chars in itertools.product(*self._char_combos))
+        
